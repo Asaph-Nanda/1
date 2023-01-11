@@ -1,0 +1,190 @@
+#include<stdio.h>
+#include<conio.h>
+#include<stdlib.h>
+
+void addstudent();
+void studentrecord();
+void searchstudent();
+void delete();
+
+  struct student {
+    char first_name[20];
+    char last_name[20];
+    int roll_no;
+    char Class[10];
+    float per;
+};
+
+void main()
+{
+    
+    int choice;
+    while(choice!=4){
+        
+    printf("STUDENT MANAGEMENT SYSTEM\n");
+    printf("1. Add Student\n");
+    printf("2. Students Records\n");
+    printf("3. Delete Student\n");
+    printf("4. Exit\n");
+    scanf("%d",&choice);
+    switch(choice){
+       case 1:
+          
+          addstudent();
+          
+         break;
+     case 2: 
+        
+        
+          studentrecord();
+          printf("  press any key to exit. \n");
+          getch();
+          
+          
+         break;
+  
+     case 3:
+         
+        delete();
+        printf("\nPress any key to exit...\n");
+        getch();
+        
+        break;
+     case 4:
+          
+          printf("\nThank you, this source code was made by Asaph Nanda - BCA Section A\n\n");
+          exit(0);
+        break;
+        
+     default :
+         
+         getch();
+         printf("\n\tEnter a valid number\n\n");
+         printf("Press any key to continue..");
+         getch();
+        
+         break;
+        }
+  
+        }
+  
+        getch();
+     }
+    
+ void addstudent(){
+   
+     char another;
+     FILE *fp;
+     int n,i;
+     struct student info;
+   do{
+       
+       printf("Add Students Info\n\n\n"); 
+       fp=fopen("information.txt","a");
+         
+        printf("Enter First Name      : ");
+          scanf("%s",&info.first_name);
+          printf("Enter Last Name     : ");
+          scanf("%s",&info.last_name);
+          printf("Enter Roll-No       : ");
+          scanf("%d",&info.roll_no);
+          printf("Enter Class(course) : ");
+          scanf("%s",&info.Class);
+          printf("Enter Percentage    : ");
+          scanf("%f",&info.per);
+          
+       
+      if(fp==NULL){
+        fprintf(stderr,"can't open file");
+    }else{
+        printf("\t\t\tRecord stored successfuly\n");
+    }
+    
+    fwrite(&info, sizeof(struct student), 1, fp); 
+    fclose(fp);
+    
+    printf("\t\t\tYou want to add another record?(y/n) : ");
+    
+    
+    scanf("%s",&another);
+    
+    
+   }while(another=='y'||another=='Y');
+}
+
+ void studentrecord(){
+   
+     FILE *fp;
+
+    struct student info;
+    fp=fopen("information.txt","r");
+    
+     printf("STUDENTS RECORD\n\n\n");
+      
+    if(fp==NULL){
+        
+        fprintf(stderr,"can't open file\n");
+        exit(0);
+    }else{
+        printf("RECORDS :\n");
+        printf("___________\n\n");
+    }
+        
+        while(fread(&info,sizeof(struct student),1,fp)){
+        printf("\n Student Name  : %s %s",info.first_name,info.last_name);
+        printf("\n Roll NO       : %d",info.roll_no);
+        printf("\n Class         : %s",info.Class);
+        printf("\n Percentage    : %f%",info.per);
+        printf("\n ________________________________\n");
+      
+         }
+        fclose(fp);
+        getch();
+      
+  }
+
+
+
+
+ void delete(){
+      struct student info;
+      FILE *fp, *fp1;
+     
+       
+    int roll_no,found=0;
+    
+       printf("DELETE STUDENTS RECORD\n\n\n");
+    fp=fopen("information.txt","r");
+    fp1=fopen("temp.txt","w");
+    printf("Enter the roll no : ");
+    scanf("%d",&roll_no);
+    if(fp==NULL){
+         fprintf(stderr,"can't open file\n");
+         exit(0);
+      }
+    
+    while(fread(&info,sizeof(struct student),1,fp)){
+        if(info.roll_no == roll_no){
+          
+            found=1;
+        
+        }else{
+           fwrite(&info,sizeof(struct student),1,fp1);
+        }
+  
+    }
+     fclose(fp);
+     fclose(fp1);
+
+    if(!found){
+          printf("\nRecord not found\n");
+        }
+      if(found){ 
+    remove("information.txt");
+        rename("temp.txt","information.txt");
+        
+        printf("\nRecord deleted succesfully\n");
+        }
+ 
+  getch();
+  }
